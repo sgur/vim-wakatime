@@ -16,6 +16,8 @@ V.S.
 Requirement
 -----------
 
+- `curl`
+
 Usage
 -----
 
