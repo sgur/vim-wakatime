@@ -62,7 +62,7 @@ function! s:format_date(date) "{{{
 endfunction "}}}
 
 function! s:ping(path, time, param) "{{{
-  let param = a:param
+  let param = copy(a:param.attr)
   let param.entity = a:path
   let param.time = a:time
   let [type, dir] = s:find_repotype(a:path)
