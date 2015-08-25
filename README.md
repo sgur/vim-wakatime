@@ -37,7 +37,7 @@ Install
 1. Create an account for [WakaTime](https://wakatime.com/)
 2. Visit [Settings/Account](https://wakatime.com/settings/account) page
 3. Copy Api Key
-4. Assign as `g:wakatime_api_token`:
+4. Assign `g:wakatime_api_token`:
 
   ```vim
   let g:wakatime_api_token = 'xxxxxxxxx'
