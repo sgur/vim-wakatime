@@ -86,7 +86,7 @@ scriptencoding utf-8
 " >>> echo wakatime#languages#find(expand('%:p:r') . '.jsx', 'javascript')
 " JSX
 
-function! wakatime#languages#find(path, filetype)
+function! wakatime#languages#find(path, filetype) abort
   " filename extension
   let ext = fnamemodify(a:path, ':e')
   let lang = filter(copy(s:languages_by_extension), 'index(v:val, ext) > -1')

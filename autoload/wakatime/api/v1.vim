@@ -18,7 +18,7 @@ let s:user_agent = printf('vim-wakatime/%s (%s) Vim%s vim-wakatime'
       \ , printf('%d.%d', v:version / 100, v:version % 100)
       \ )
 
-function! s:header() "{{{
+function! s:header() abort "{{{
   return extend(
         \ { 'X-Machine-Name': hostname()
         \ , 'Content-Type': 'application/json'
@@ -30,15 +30,15 @@ endfunction "}}}
 
 " Interface {{{1
 
-function! wakatime#api#v1#true()
+function! wakatime#api#v1#true() abort
   return s:json.true
 endfunction
 
-function! wakatime#api#v1#false()
+function! wakatime#api#v1#false() abort
   return s:json.false
 endfunction
 
-function! wakatime#api#v1#post_bg(path, param)
+function! wakatime#api#v1#post_bg(path, param) abort
   if empty(get(g:, 'wakatime_api_key', '')) | return | endif
   let url = s:url . a:path
   let postdata = s:json.encode(a:param)
@@ -46,7 +46,7 @@ function! wakatime#api#v1#post_bg(path, param)
   let file = tempname()
   if executable('curl')
     let command = 'curl -q -L -s -k -X POST'
-    let quote = &shellxquote == '"' ?  "'" : '"'
+    let quote = &shellxquote ==# '"' ?  "'" : '"'
     for key in keys(headdata)
       if has('win32')
         let command .= " -H " . quote . key . ": " . substitute(headdata[key], '"', '"""', 'g') . quote

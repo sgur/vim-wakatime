@@ -6,23 +6,23 @@ set cpo&vim
 
 let s:update_log = {}
 
-function! s:heartbeat_timer_expired() dict "{{{
+function! s:heartbeat_timer_expired() dict abort "{{{
   return self.time[-1] - self.time[0] > get(g:, 'wakatime_heartbeat_interval', 60)
 endfunction "}}}
 
-function! s:heartbeat_reset() dict "{{{
+function! s:heartbeat_reset() dict abort "{{{
   let self.time = self.time[-1:-1]
 endfunction "}}}
 
-function! s:git_branch(dir) "{{{
+function! s:git_branch(dir) abort "{{{
   return matchstr(readfile(a:dir . '/HEAD', 'b')[0], '/\zs[^/]\+$')
 endfunction "}}}
 
-function! s:hg_branch(dir) "{{{
+function! s:hg_branch(dir) abort "{{{
   return readfile(a:dir . '/branch', 'b')[0]
 endfunction "}}}
 
-function! s:find_repotype(dir) "{{{
+function! s:find_repotype(dir) abort "{{{
   let parent = fnamemodify(a:dir, ':h')
   if a:dir == parent
     return ['', '']
@@ -34,7 +34,7 @@ function! s:find_repotype(dir) "{{{
   return s:find_repotype(parent)
 endfunction "}}}
 
-function! s:re_match_pattern(path, patterns) "{{{
+function! s:re_match_pattern(path, patterns) abort "{{{
   for pattern in a:patterns
     let pat = pattern . (has('win32') ? '\c' : '')
     if a:path =~ pat || substitute(a:path, '\', '/', 'g') =~ pat
@@ -44,24 +44,24 @@ function! s:re_match_pattern(path, patterns) "{{{
   return 0
 endfunction "}}}
 
-function! s:is_hidden(path) "{{{
+function! s:is_hidden(path) abort "{{{
   return s:re_match_pattern(a:path, get(g:, 'wakatime_hidden_patterns', []))
 endfunction "}}}
 
-function! s:is_ignored(path) "{{{
+function! s:is_ignored(path) abort "{{{
   return s:re_match_pattern(a:path, get(g:, 'wakatime_ignore_patterns', []))
 endfunction "}}}
 
-function! s:hidden_name(path) "{{{
+function! s:hidden_name(path) abort "{{{
   let ext = fnamemodify(a:path, ':e')
   return empty(ext) ? 'HIDDEN' : 'HIDDEN.' . ext
 endfunction "}}}
 
-function! s:format_date(date) "{{{
+function! s:format_date(date) abort "{{{
   return printf('%8S: %s', strftime('%X', float2nr(a:date.time)), a:date.entity)
 endfunction "}}}
 
-function! s:ping(path, time, param) "{{{
+function! s:ping(path, time, param) abort "{{{
   let param = copy(a:param.attr)
   let param.entity = a:path
   let param.time = a:time
@@ -73,11 +73,11 @@ function! s:ping(path, time, param) "{{{
   call wakatime#api#v1#heartbeats#post(param)
 endfunction "}}}
 
-function! s:get_entity(path) "{{{
+function! s:get_entity(path) abort "{{{
   return s:is_hidden(a:path) ? s:hidden_name(a:path) : a:path
 endfunction "}}}
 
-function! s:new(language, lines) "{{{
+function! s:new(language, lines) abort "{{{
   return
         \ { 'attr':
         \   { 'type': 'file'
@@ -90,7 +90,7 @@ function! s:new(language, lines) "{{{
         \ }
 endfunction "}}}
 
-function! s:tick(path, is_write, force, ...) "{{{
+function! s:tick(path, is_write, force, ...) abort "{{{
   let entity = s:get_entity(a:path)
 
   if !has_key(s:update_log, entity)
@@ -110,7 +110,7 @@ function! s:tick(path, is_write, force, ...) "{{{
   endif
 endfunction "}}}
 
-function! s:close(path) "{{{
+function! s:close(path) abort "{{{
   let entity = s:get_entity(a:path)
 
   if has_key(s:update_log, entity)
@@ -118,23 +118,23 @@ function! s:close(path) "{{{
   endif
 endfunction "}}}
 
-function! wakatime#write(path)
+function! wakatime#write(path) abort
   if s:is_ignored(a:path) | return | endif
   call s:tick(a:path, 1, 1)
 endfunction
 
-function! wakatime#close(path)
+function! wakatime#close(path) abort
   if s:is_ignored(a:path) | return | endif
   call s:tick(a:path, 0, 1)
   call s:close(a:path)
 endfunction
 
-function! wakatime#open(path)
+function! wakatime#open(path) abort
   if s:is_ignored(a:path) | return | endif
   call s:tick(a:path, 0, 0)
 endfunction
 
-function! wakatime#update(path)
+function! wakatime#update(path) abort
   if s:is_ignored(a:path) || localtime() - get(b:, 'wakatime_last_ticked', 0) <= get(g:, 'wakatime_tick_period', 5)
     return
   endif
@@ -142,7 +142,7 @@ function! wakatime#update(path)
   let b:wakatime_last_ticked = localtime()
 endfunction
 
-function! wakatime#dump()
+function! wakatime#dump() abort
   return s:update_log
 endfunction
 
