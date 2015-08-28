@@ -16,7 +16,7 @@ set cpo&vim
 " Internal {{{1
 
 function! s:do(path, func) "{{{
-  if !filewritable(a:path) || &readonly || !&modifiable
+  if &readonly || !&modifiable || isdirectory(a:path)
     return
   endif
   call call(a:func, [a:path])
