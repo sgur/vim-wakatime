@@ -87,13 +87,13 @@ scriptencoding utf-8
 " JSX
 
 function! wakatime#languages#find(path, filetype) abort
-  " filename extension
   let ext = fnamemodify(a:path, ':e')
-  let lang = filter(copy(s:languages_by_extension), 'index(v:val, ext) > -1')
-  if !empty(ext) && !empty(lang)
-    return keys(lang)[0]
+  if !empty(ext)
+    let lang = filter(copy(s:languages_by_extension), 'index(v:val, ext) > -1')
+    if !empty(lang)
+      return keys(lang)[0]
+    endif
   endif
-  " &filetype
   let lang = filter(copy(s:languages_by_filetype), 'index(v:val, a:filetype) > -1')
   if !empty(lang)
     return keys(lang)[0]
