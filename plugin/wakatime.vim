@@ -16,7 +16,7 @@ set cpo&vim
 " Internal {{{1
 
 function! s:do(path, func) "{{{
-  if &readonly || !&modifiable || empty(a:path) || isdirectory(a:path)
+  if &readonly || !&modifiable || empty(a:path) || isdirectory(a:path) || !empty(&buftype)
     return
   endif
   call call(a:func, [a:path])
